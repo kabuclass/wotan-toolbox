@@ -4,7 +4,7 @@ An educational activity library built with HTML, CSS and JavaScript.
 
 ## Main categories
 
-- Lectura / Reading
+- Reading / Lectura
 - Games / Juegos
 
 ## Project structure
@@ -17,7 +17,7 @@ An educational activity library built with HTML, CSS and JavaScript.
 
 ## Adding a new activity
 
-1. Create a folder inside the appropriate category under `games/ or /lectura`.
+1. Create a folder inside the appropriate category under `games/ or /reading`.
 2. Add an `index.html` file.
 3. Add CSS and JavaScript files if necessary.
 4. Add a new activity card to the corresponding category page.
