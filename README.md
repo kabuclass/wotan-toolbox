@@ -1,4 +1,4 @@
-# ✦ Wotan Toolbox
+# Wotan Toolbox
 
 An educational activity library built with HTML, CSS and JavaScript.
 
