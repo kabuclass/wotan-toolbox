@@ -1,280 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A bilingual library of reading activities and educational games.">
-  <title>Teacher Toolbox | Learning Library</title>
-  <style>
-    /* CSS Variables for Dark Mode */
-    :root {
-      --bg-color: #0f172a;
-      --surface-color: #1e293b;
-      --surface-hover: #334155;
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --accent-color: #3b82f6;
-      --border-color: #334155;
-      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-primary);
-      font-family: var(--font-family);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    /* Header */
-    .site-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 2rem 5%;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .brand {
-      font-weight: 600;
-      font-size: 1.1rem;
-      letter-spacing: -0.02em;
-    }
-
-    /* Hero Section */
-    .hero {
-      text-align: center;
-      padding: 6rem 2rem 4rem;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .eyebrow {
-      display: block;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent-color);
-      margin-bottom: 1rem;
-      font-weight: 600;
-    }
-
-    .hero h1 {
-      font-size: 3.5rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      margin-bottom: 1.5rem;
-      line-height: 1.1;
-    }
-
-    .hero p {
-      font-size: 1.125rem;
-      color: var(--text-secondary);
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    /* Categories Section */
-    .categories {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 2rem 2rem 6rem;
-    }
-
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .category-card {
-      background-color: var(--surface-color);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 2.5rem 2rem;
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .category-card:hover {
-      background-color: var(--surface-hover);
-      border-color: var(--text-secondary);
-      transform: translateY(-2px);
-    }
-
-    .card-icon {
-      width: 32px;
-      height: 32px;
-      margin-bottom: 1.5rem;
-      color: var(--text-primary);
-    }
-
-    .card-icon svg {
-      width: 100%;
-      height: 100%;
-      stroke: currentColor;
-      stroke-width: 1.5;
-      fill: none;
-    }
-
-    .card-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-secondary);
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-    }
-
-    .category-card h3 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      letter-spacing: -0.02em;
-    }
-
-    .category-card p {
-      color: var(--text-secondary);
-      font-size: 0.95rem;
-      margin-bottom: 2rem;
-      flex-grow: 1;
-    }
-
-    .card-link {
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: var(--accent-color);
-      display: inline-flex;
-      align-items: center;
-    }
-
-    /* Footer */
-    .site-footer {
-      display: flex;
-      justify-content: space-between;
-      padding: 2rem 5%;
-      max-width: 1200px;
-      margin: 0 auto;
-      border-top: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      font-size: 0.875rem;
-    }
-
-    @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 2.5rem;
-      }
-      .hero {
-        padding: 4rem 1rem 3rem;
-      }
-      .categories {
-        padding: 1rem 1rem 4rem;
-      }
-      .site-footer {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A bilingual library of reading activities and educational games.">
+<meta name="theme-color" content="#0f172a">
+<title>Teacher Toolbox | Learning Library</title>
+<style>
+:root {
+  --bg-color:#0f172a; --surface-color:#1e293b; --text-primary:#f8fafc;
+  --text-secondary:#b6c4d8; --accent-color:#60a5fa; --border-color:#3b4b63;
+  --reading-accent:#22c1a1; --reading-soft:rgba(34,193,161,.12);
+  /* Changed from yellow to electric blue */
+  --gaming-accent:#3b82f6; --gaming-soft:rgba(59,130,246,.13);
+  --font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:var(--bg-color);color:var(--text-primary);font-family:var(--font-family);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:inherit;text-decoration:none}
+.site-header{display:flex;align-items:center;justify-content:space-between;width:min(1120px,100%);margin:0 auto;padding:1.35rem 2rem}
+.brand{font-size:1.1rem;font-weight:700;letter-spacing:-.02em}
+.hero{max-width:850px;margin:0 auto;padding:5.2rem 1.5rem 4rem;text-align:center}
+.eyebrow{display:block;margin-bottom:1rem;color:var(--accent-color);font-size:.82rem;font-weight:750;letter-spacing:.13em;text-transform:uppercase}
+.hero h1{margin-bottom:1.25rem;font-size:clamp(2.5rem,5.5vw,3.8rem);font-weight:750;letter-spacing:-.04em;line-height:1.12}
+.hero p{max-width:650px;margin:0 auto;color:var(--text-secondary);font-size:1.15rem;line-height:1.7}
+.categories{width:min(1040px,100%);margin:0 auto;padding:1.8rem 2rem 5.5rem}
+.category-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem}
+.category-card{position:relative;display:flex;min-width:0;flex-direction:column;align-items:center;overflow:hidden;padding:2.5rem 2rem 2.2rem;border:1px solid var(--border-color);border-radius:16px;background:var(--surface-color);text-align:center;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.category-card:before{position:absolute;top:0;left:0;width:100%;height:5px;content:""}
+.reading-card{border-color:rgba(34,193,161,.42);background:linear-gradient(155deg,var(--reading-soft),transparent 58%),var(--surface-color)}
+.reading-card:before{background:var(--reading-accent)}
+/* Updated gaming card border and gradient */
+.games-card{border-color:rgba(59,130,246,.45);background:linear-gradient(155deg,var(--gaming-soft),transparent 58%),var(--surface-color)}
+.games-card:before{background:var(--gaming-accent)}
+.category-card:hover,.category-card:focus-visible{transform:translateY(-4px);outline:none;box-shadow:0 14px 32px rgba(0,0,0,.2)}
+.reading-card:hover,.reading-card:focus-visible{border-color:var(--reading-accent)}
+.games-card:hover,.games-card:focus-visible{border-color:var(--gaming-accent)}
+.card-icon{display:grid;width:76px;height:76px;place-items:center;margin:0 auto 1.35rem;border-radius:20px}
+.reading-card .card-icon{color:var(--reading-accent);background:var(--reading-soft)}
+/* Updated gaming icon color */
+.games-card .card-icon{color:var(--gaming-accent);background:var(--gaming-soft)}
+.card-icon svg{display:block;width:43px;height:43px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+.card-label{margin-bottom:.55rem;color:var(--text-secondary);font-size:.82rem;font-weight:750;letter-spacing:.08em;text-transform:uppercase}
+.category-card h2{margin-bottom:.8rem;font-size:1.65rem;font-weight:700;letter-spacing:-.02em}
+.category-card p{flex-grow:1;margin-bottom:1.7rem;color:var(--text-secondary);font-size:1.03rem;line-height:1.65}
+.card-link{display:inline-flex;align-items:center;min-height:44px;font-size:1rem;font-weight:700}
+.reading-card .card-link{color:#5eead4}
+/* Updated gaming link color to a lighter blue for readability */
+.games-card .card-link{color:#93c5fd}
+@media(max-width:700px){
+ body{font-size:16px}
+ .site-header{padding:1.1rem 1.25rem}
+ .hero{padding:3.5rem 1.25rem 2.7rem}
+ .hero h1{font-size:clamp(2.15rem,9vw,3rem)}
+ .hero p{font-size:1.05rem}
+ .categories{padding:1rem 1.15rem 3.5rem}
+ .category-grid{grid-template-columns:1fr;gap:1.1rem}
+ .category-card{padding:2rem 1.4rem 1.8rem}
+ .category-card h2{font-size:1.55rem}
+ .category-card p{font-size:1rem}
+}
+@media(max-width:360px){.hero h1{font-size:2rem}.category-card{padding-inline:1.1rem}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}}
+</style>
 </head>
 <body>
-  <header class="site-header">
-    <a class="brand" href="index.html">
-      Teacher Toolbox
-    </a>
-  </header>
-
-  <main>
-    <section class="hero">
-      <span class="eyebrow" data-en="YOUR LEARNING SPACE"
-        data-es="TU ESPACIO DE APRENDIZAJE">YOUR LEARNING SPACE</span>
-
-      <h1 data-en="Keep learning and have fun!"
-        data-es="¡Sigue aprendiendo y diviértete!">
-        Keep learning and have fun!
-      </h1>
-
-      <p data-en="Explore readings, interactive activities and games designed to make learning more engaging."
-         data-es="Explora lecturas, actividades interactivas y juegos diseñados para hacer del aprendizaje una experiencia más interesante.">
-        Explore readings, interactive activities and games designed to make learning more engaging.
-      </p>
-    </section>
-
-    <section class="categories" id="categories">
-      <div class="category-grid">
-        
-        <!-- Reading Card -->
-        <a class="category-card reading-card" href="lectura/index.html">
-          <div class="card-icon">
-            <!-- Modern Book Icon -->
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-            </svg>
-          </div>
-          <span class="card-label" data-en="READ & DISCOVER"
-            data-es="LEE Y DESCUBRE">READ & DISCOVER</span>
-          <h3 data-en="Reading" data-es="Reading">Reading</h3>
-          <p data-en="Business cases, articles, comprehension and classroom readings."
-             data-es="Casos de negocio, artículos, comprensión lectora y textos para clase.">
-            Business cases, articles, comprehension and classroom readings.
-          </p>
-          <span class="card-link" data-en="Explore readings →"
-            data-es="Explorar lecturas →">Explore readings →</span>
-        </a>
-
-        <!-- Gaming Card -->
-        <a class="category-card games-card" href="games/index.html">
-          <div class="card-icon">
-            <!-- Modern Gamepad Icon -->
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="6" y1="12" x2="10" y2="12"></line>
-              <line x1="8" y1="10" x2="8" y2="14"></line>
-              <line x1="15" y1="13" x2="15.01" y2="13"></line>
-              <line x1="18" y1="11" x2="18.01" y2="11"></line>
-              <rect x="2" y="6" width="20" height="12" rx="2"></rect>
-            </svg>
-          </div>
-          <span class="card-label" data-en="PLAY & PRACTISE"
-            data-es="JUEGA Y PRACTICA">PLAY & PRACTISE</span>
-          <h3 data-en="Gaming" data-es="Gaming">Gaming</h3>
-          <p data-en="Quizzes, challenges, games and interactive experiences."
-             data-es="Cuestionarios, retos, juegos y experiencias interactivas.">
-            Quizzes, challenges, games and interactive experiences.
-          </p>
-          <span class="card-link" data-en="Explore games →"
-            data-es="Explorar juegos →">Explore games →</span>
-        </a>
-
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <span>Teacher Toolbox</span>
-    <span data-en="Made for learning." data-es="Creado para aprender.">Made for learning.</span>
-  </footer>
-
-  <!-- Retained the translation script functionality in case you want to add the toggle back later -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Language toggle logic can be added back here if needed in the future.
-      // The data-en and data-es attributes remain intact in the HTML.
-    });
-  </script>
+<header class="site-header"><a class="brand" href="index.html">Teacher Toolbox</a></header>
+<main>
+<section class="hero">
+<span class="eyebrow" data-en="YOUR LEARNING SPACE" data-es="TU ESPACIO DE APRENDIZAJE">YOUR LEARNING SPACE</span>
+<h1 data-en="Keep learning and have fun!" data-es="¡Sigue aprendiendo y diviértete!">Keep learning and have fun!</h1>
+<p data-en="Explore readings, interactive activities and games designed to make learning more engaging." data-es="Explora lecturas, actividades interactivas y juegos diseñados para hacer del aprendizaje una experiencia más interesante.">Explore readings, interactive activities and games designed to make learning more engaging.</p>
+</section>
+<section class="categories" id="categories" aria-label="Learning categories">
+<div class="category-grid">
+<a class="category-card reading-card" href="lectura/index.html">
+<div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></div>
+<span class="card-label" data-en="READ & DISCOVER" data-es="LEE Y DESCUBRE">READ &amp; DISCOVER</span>
+<h2 data-en="Reading" data-es="Reading">Reading</h2>
+<p data-en="Business cases, articles, comprehension and classroom readings." data-es="Casos de negocio, artículos, comprensión lectora y textos para clase.">Business cases, articles, comprehension and classroom readings.</p>
+<span class="card-link" data-en="Explore readings →" data-es="Explorar lecturas →">Explore readings →</span>
+</a>
+<a class="category-card games-card" href="games/index.html">
+<div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><line x1="15" y1="13" x2="15.01" y2="13"></line><line x1="18" y1="11" x2="18.01" y2="11"></line><rect x="2" y2="6" width="20" height="12" rx="2"></rect></svg></div>
+<span class="card-label" data-en="PLAY & PRACTISE" data-es="JUEGA Y PRACTICA">PLAY &amp; PRACTISE</span>
+<h2 data-en="Gaming" data-es="Gaming">Gaming</h2>
+<p data-en="Quizzes, challenges, games and interactive experiences." data-es="Cuestionarios, retos, juegos y experiencias interactivas.">Quizzes, challenges, games and interactive experiences.</p>
+<span class="card-link" data-en="Explore games →" data-es="Explorar juegos →">Explore games →</span>
+</a>
+</div>
+</section>
+</main>
 </body>
 </html>
