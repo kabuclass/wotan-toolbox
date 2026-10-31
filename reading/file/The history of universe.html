@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#241044">
+<title>SHEIN CEO Challenge | Simulador de decisiones</title>
+<style>
+  :root {
+    --ink: #20202a; --muted: #666676; --paper: #fff; --bg: #f5f4f7;
+    --accent: #7c3aed; --accent2: #ec4899; --line: #e6e2eb;
+    --good: #16794b; --warn: #a65a00; --bad: #b42335;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); line-height: 1.5; }
+  button, input { font: inherit; }
+  button {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .topbar { background: linear-gradient(115deg, #241044, #5b21b6 58%, #be185d); color: white; padding: 22px 16px 28px; }
+  .top-inner { max-width: 1050px; margin: auto; }
+  .eyebrow { text-transform: uppercase; letter-spacing: .15em; font-size: .74rem; font-weight: 800; opacity: .85; }
+  h1 { font-size: clamp(1.7rem, 4.5vw, 3rem); line-height: 1.08; margin: 8px 0; }
+  .topbar p { max-width: 700px; margin: 10px 0 0; color: #f3e8ff; font-size: clamp(.92rem, 2.5vw, 1.05rem); }
+
+  main { max-width: 1050px; margin: -14px auto 40px; padding: 0 12px; position: relative; }
+  .layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .card { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 8px 28px #27123b0a; }
+  .sidebar { padding: 16px; }
+  .section-label { font-size: .74rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 800; margin-bottom: 8px; }
+  .metric { margin: 14px 0; }
+  .metric-head { display: flex; justify-content: space-between; gap: 10px; font-size: .9rem; font-weight: 700; margin-bottom: 6px; }
+  .track { height: 8px; background: #eeeaf3; border-radius: 99px; overflow: hidden; }
+  .fill { height: 100%; width: 60%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width .35s ease; }
+  .small { font-size: .84rem; color: var(--muted); }
+  .pill { display: inline-flex; padding: 5px 10px; border-radius: 999px; background: #f2eaff; color: #5b21b6; font-weight: 800; font-size: .76rem; }
+
+  .content { padding: clamp(16px, 3.5vw, 30px); min-height: auto; }
+  .content h2 { margin: 8px 0 10px; font-size: clamp(1.25rem, 3.2vw, 1.95rem); line-height: 1.2; }
+  .scenario { background: #faf7ff; border: 1px solid #eadcff; border-radius: 12px; padding: 14px 15px; margin: 14px 0; font-size: .95rem; }
+
+  /* Choices — mobile-first touch targets */
+  .choices { display: grid; gap: 10px; margin: 14px 0; }
+  .choice {
+    text-align: left;
+    background: white;
+    border: 1.5px solid var(--line);
+    padding: 14px 14px;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s, transform .12s;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    color: var(--ink);
+    width: 100%;
+    min-height: 52px;
+    margin: 0;
+  }
+  .choice:active:not(:disabled) { transform: scale(.985); background: #faf7ff; }
+  .choice:hover:not(:disabled),
+  .choice:focus-visible:not(:disabled) { border-color: var(--accent); outline: none; }
+  .choice:focus-visible, .primary:focus-visible, .secondary:focus-visible { outline: 3px solid #c4b5fd; outline-offset: 2px; }
+  .letter {
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    background: #f2eef8;
+    color: #5b21b6;
+    pointer-events: none;
+  }
+  .choice span:not(.letter) { pointer-events: none; }
+  .choice:disabled { cursor: default; opacity: .95; }
+  .choice.selected { border-color: var(--accent); background: #faf7ff; box-shadow: 0 0 0 2px #ddd6fe; }
+  .choice.correct { border-color: #7cc9a3; background: #f0fdf4; }
+  .choice.incorrect { border-color: #f1a2ac; background: #fff5f6; }
+
+  .feedback { border-radius: 12px; padding: 14px 15px; margin-top: 12px; border: 1px solid var(--line); }
+  .feedback h3 { margin: 0 0 4px; font-size: 1rem; }
+  .feedback p { margin: 0; }
+
+  .primary, .secondary {
+    border: 0;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-weight: 800;
+    cursor: pointer;
+    min-height: 48px;
+  }
+  .primary { color: white; background: linear-gradient(100deg, var(--accent), #9333ea); box-shadow: 0 5px 14px #7c3aed25; }
+  .primary:active, .secondary:active { opacity: .9; }
+  .primary:hover { filter: brightness(1.06); }
+  .secondary { color: #4b326b; background: #f1ecf7; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; padding-bottom: var(--safe-bottom); }
+
+  .progress-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 12px 0 16px; }
+  .progress-track { flex: 1; height: 6px; background: #eeeaf3; border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width .3s ease; }
+  .hidden { display: none !important; }
+
+  .score-circle { width: 110px; height: 110px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--accent) 0deg, #eeeaf3 0deg); margin: 16px auto; position: relative; }
+  .score-circle::before { content: ""; position: absolute; inset: 8px; background: white; border-radius: 50%; }
+  .score-number { z-index: 1; text-align: center; font-size: 1.6rem; font-weight: 900; }
+  .score-number span { display: block; font-size: .7rem; color: var(--muted); font-weight: 700; }
+  .report-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 14px 0; }
+  .report-stat { border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+  .report-stat strong { display: block; font-size: 1.25rem; }
+  .report-stat span { color: var(--muted); font-size: .84rem; }
+  .report-list { padding-left: 18px; }
+  .report-list li { margin: 8px 0; }
+  .notice { background: #fff8e8; border: 1px solid #f3d69a; padding: 12px 13px; border-radius: 11px; font-size: .86rem; }
+
+  footer { max-width: 1050px; margin: 0 auto; padding: 0 14px 24px; color: var(--muted); font-size: .8rem; }
+
+  @media (max-width: 760px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { order: 2; }
+    .content { min-height: auto; padding: 16px 14px; }
+    .report-grid { grid-template-columns: 1fr 1fr; }
+    .choice { min-height: 56px; padding: 13px 12px; }
+    .primary, .secondary { flex: 1 1 auto; text-align: center; }
+    .metric { margin: 10px 0; }
+  }
+  @media (max-width: 400px) {
+    .report-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 1.6rem; }
+  }
+  @supports (-webkit-touch-callout: none) {
+    .choice { min-height: 56px; }
+    .primary, .secondary { min-height: 50px; }
+  }
+  @media print {
+    body { background: white; }
+    .topbar { background: white; color: black; border-bottom: 2px solid #222; }
+    .topbar p { color: #333; }
+    main { margin-top: 12px; }
+    .layout { display: block; }
+    .sidebar, .actions, .progress-row, #restartBtn { display: none !important; }
+    .card { box-shadow: none; }
+  }
+
+/* Accessibility and reliable touch selection */
+.choices { position: relative; z-index: 1; }
+.choice { position: relative; z-index: 1; pointer-events: auto; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.choice:disabled { pointer-events: none; }
+
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="top-inner">
+    <div class="eyebrow">Simulador individual · Estrategia empresarial</div>
+    <h1>SHEIN CEO Challenge</h1>
+    <p>Asume el liderazgo de una marca global de moda digital. Toma decisiones, observa sus consecuencias y encuentra el equilibrio entre crecimiento, rentabilidad, reputación y sostenibilidad.</p>
+  </div>
+</header>
+
+<main>
+  <div class="layout">
+    <aside class="card sidebar">
+      <div class="section-label">Panel de dirección</div>
+      <div class="small">Tu desempeño durante la simulación</div>
+      <div class="metric">
+        <div class="metric-head"><span>Rentabilidad</span><span id="profitValue">60/100</span></div>
+        <div class="track"><div class="fill" id="profitBar"></div></div>
+      </div>
+      <div class="metric">
+        <div class="metric-head"><span>Crecimiento</span><span id="growthValue">60/100</span></div>
+        <div class="track"><div class="fill" id="growthBar"></div></div>
+      </div>
+      <div class="metric">
+        <div class="metric-head"><span>Reputación</span><span id="reputationValue">60/100</span></div>
+        <div class="track"><div class="fill" id="reputationBar"></div></div>
+      </div>
+      <div class="metric">
+        <div class="metric-head"><span>Sostenibilidad</span><span id="sustainabilityValue">60/100</span></div>
+        <div class="track"><div class="fill" id="sustainabilityBar"></div></div>
+      </div>
+      <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+      <div class="section-label">Tu misión</div>
+      <p class="small">Completa 5 decisiones estratégicas. Cada elección tiene consecuencias. No basta con maximizar un solo indicador: debes gestionar los posibles conflictos entre objetivos.</p>
+      <div class="notice">Los indicadores y sus variaciones son una simulación didáctica, no datos financieros reales de SHEIN.</div>
+    </aside>
+
+    <section class="card content">
+      <div id="gameView">
+        <span class="pill" id="roundPill">Ronda 1 de 5</span>
+        <div class="progress-row">
+          <span class="small" id="progressText">Progreso: 0%</span>
+          <div class="progress-track" aria-label="Progreso del juego"><div class="progress-fill" id="progressBar"></div></div>
+        </div>
+        <div class="eyebrow" style="color:#7c3aed;opacity:1" id="category">Innovación y datos</div>
+        <h2 id="scenarioTitle">Una tendencia viral</h2>
+        <p id="scenarioIntro">El equipo de análisis detecta una tendencia emergente en redes sociales.</p>
+        <div class="scenario" id="scenarioText"></div>
+        <h3 style="font-size:1rem;margin:12px 0 6px">¿Qué decisión tomarías como CEO?</h3>
+        <div class="choices" id="choices" role="group" aria-label="Opciones de decisión"></div>
+        <div id="feedback" class="feedback hidden" aria-live="polite"></div>
+        <div class="actions">
+          <button type="button" class="primary hidden" id="nextBtn">Siguiente desafío →</button>
+          <button type="button" class="secondary hidden" id="restartBtn">Reiniciar actividad</button>
+        </div>
+      </div>
+
+      <div id="resultView" class="hidden">
+        <span class="pill">Simulación completada</span>
+        <h2 style="text-align:center;margin-top:14px">Tu informe de dirección</h2>
+        <div class="score-circle" id="scoreCircle"><div class="score-number"><span id="scoreNumber">0</span><span>puntos de 100</span></div></div>
+        <p id="resultHeadline" style="text-align:center;font-size:1.1rem;font-weight:800"></p>
+        <p id="resultSummary" style="text-align:center;color:var(--muted)"></p>
+        <div class="report-grid" id="reportGrid"></div>
+        <h3>Lectura de tu estrategia</h3>
+        <ul class="report-list" id="reportList"></ul>
+        <div class="notice">Reflexión final: ¿qué indicador te resultó más difícil de proteger? ¿Qué cambiarías si tuvieras una ronda adicional?</div>
+        <div class="actions">
+          <button type="button" class="primary" id="printBtn">Imprimir / guardar informe en PDF</button>
+          <button type="button" class="secondary" id="playAgainBtn">Volver a jugar</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  Actividad educativa basada en el caso de estudio proporcionado. Los escenarios y efectos sobre los indicadores son ficticios y se utilizan para facilitar el análisis de decisiones empresariales.
+</footer>
+
+<script>
+const initialStats = { profit: 60, growth: 60, reputation: 60, sustainability: 60 };
+const statLabels = {
+  profit: "Rentabilidad",
+  growth: "Crecimiento",
+  reputation: "Reputación",
+  sustainability: "Sostenibilidad"
+};
+
+const rounds = [
+  {
+    category: "Innovación y datos",
+    title: "Una tendencia viral",
+    intro: "El equipo de análisis detecta una tendencia emergente en redes sociales.",
+    situation: "Los datos de búsquedas, productos guardados y contenido compartido sugieren que un estilo podría volverse popular. La ventana para responder es corta, pero la demanda todavía es incierta.",
+    choices: [
+      {
+        text: "Lanzar una colección grande de inmediato para aprovechar la tendencia.",
+        effects: { profit: 8, growth: 12, reputation: -2, sustainability: -8 },
+        feedback: "Una respuesta rápida puede impulsar las ventas y el crecimiento. Sin embargo, producir mucho antes de confirmar la demanda aumenta el riesgo de excedentes y residuos."
+      },
+      {
+        text: "Lanzar un lote pequeño, medir la respuesta y reponer si hay demanda.",
+        effects: { profit: 5, growth: 7, reputation: 3, sustainability: 5 },
+        feedback: "La estrategia de prueba y reposición se parece al modelo test and repeat descrito en el caso. Permite aprender de la demanda y limitar el inventario no vendido, aunque exige seguimiento constante."
+      },
+      {
+        text: "Esperar hasta que la tendencia esté plenamente establecida.",
+        effects: { profit: 0, growth: -6, reputation: 1, sustainability: 4 },
+        feedback: "Esperar puede reducir el riesgo de producir artículos que no se vendan, pero también puede hacer que la empresa llegue tarde a una tendencia de corta duración."
+      }
+    ]
+  },
+  {
+    category: "Marketing digital",
+    title: "Conquistar a la Generación Z",
+    intro: "El equipo de marketing debe decidir cómo utilizar un presupuesto limitado.",
+    situation: "La marca quiere aumentar su visibilidad entre consumidores jóvenes. El caso destaca TikTok, Instagram, microinfluencers y una experiencia personalizada en la aplicación como elementos de su estrategia.",
+    choices: [
+      {
+        text: "Colaborar con microinfluencers y medir qué campañas generan interacción y ventas.",
+        effects: { profit: 5, growth: 8, reputation: 4, sustainability: 0 },
+        feedback: "Las colaboraciones pueden llegar a comunidades específicas y permitir medir resultados. El efecto dependerá de la credibilidad de los creadores y de la respuesta de la audiencia."
+      },
+      {
+        text: "Ofrecer descuentos muy agresivos para aumentar las compras rápidamente.",
+        effects: { profit: -5, growth: 10, reputation: 0, sustainability: -2 },
+        feedback: "Los descuentos pueden impulsar las ventas a corto plazo, pero reducen el margen por producto y pueden reforzar una dinámica centrada en comprar más y con mayor frecuencia."
+      },
+      {
+        text: "Invertir todo el presupuesto en una campaña viral con una sola celebridad.",
+        effects: { profit: -3, growth: 7, reputation: 1, sustainability: 0 },
+        feedback: "Una campaña de gran alcance puede generar notoriedad, pero concentra el riesgo en una sola colaboración y no garantiza conversiones ni una relación duradera con los consumidores."
+      }
+    ]
+  },
+  {
+    category: "Operaciones y proveedores",
+    title: "Ajustar la producción",
+    intro: "La demanda cambia rápidamente y el equipo de operaciones necesita responder.",
+    situation: "La red flexible de proveedores permite ajustar la oferta. Debes decidir cómo equilibrar velocidad, costos y riesgo de inventario sin perder de vista la calidad del producto.",
+    choices: [
+      {
+        text: "Aumentar la producción de todos los artículos que muestran señales iniciales de popularidad.",
+        effects: { profit: 7, growth: 8, reputation: -3, sustainability: -7 },
+        feedback: "Ampliar la producción puede aprovechar la demanda, pero las señales tempranas no siempre se convierten en ventas sostenidas. El exceso de oferta puede generar desperdicio y problemas de calidad."
+      },
+      {
+        text: "Usar lotes pequeños, revisar ventas y comentarios, y reponer los productos con demanda comprobada.",
+        effects: { profit: 5, growth: 5, reputation: 3, sustainability: 5 },
+        feedback: "Esta decisión aplica el enfoque de prueba y reposición del caso. La información de ventas ayuda a ajustar la oferta, aunque es importante vigilar la calidad y las condiciones de los proveedores."
+      },
+      {
+        text: "Elegir exclusivamente al proveedor más barato y priorizar la velocidad.",
+        effects: { profit: 8, growth: 5, reputation: -8, sustainability: -5 },
+        feedback: "Reducir costos puede mejorar los márgenes a corto plazo, pero elegir solo por precio deja fuera criterios como condiciones laborales, calidad y trazabilidad."
+      }
+    ]
+  },
+  {
+    category: "Ética y reputación",
+    title: "Una crisis de confianza",
+    intro: "Circulan nuevas críticas sobre las condiciones laborales de proveedores subcontratados.",
+    situation: "El caso menciona denuncias de explotación laboral, cuestionamientos sobre la sostenibilidad y acusaciones de plagio a diseñadores independientes. La empresa debe responder sin limitarse a una campaña publicitaria.",
+    choices: [
+      {
+        text: "Realizar auditorías independientes, publicar hallazgos y exigir planes correctivos a los proveedores.",
+        effects: { profit: -5, growth: -1, reputation: 12, sustainability: 8 },
+        feedback: "La auditoría y la transparencia pueden implicar costos y ajustes operativos, pero permiten abordar el problema de fondo y crear mecanismos para verificar mejoras."
+      },
+      {
+        text: "Lanzar una campaña de imagen positiva sin cambiar los procesos de compra.",
+        effects: { profit: 2, growth: 3, reputation: -7, sustainability: -3 },
+        feedback: "La publicidad puede aumentar la visibilidad, pero no resuelve las causas de las críticas. Si las prácticas no cambian, la distancia entre el mensaje y la realidad puede dañar aún más la confianza."
+      },
+      {
+        text: "No responder públicamente y mantener la operación como está.",
+        effects: { profit: 3, growth: 0, reputation: -10, sustainability: -5 },
+        feedback: "Evitar costos inmediatos puede parecer conveniente, pero ignorar las preocupaciones no elimina los riesgos reputacionales, operativos ni éticos."
+      }
+    ]
+  },
+  {
+    category: "Estrategia de futuro",
+    title: "Crecer sin perder legitimidad",
+    intro: "La dirección debe definir una prioridad para la siguiente etapa de crecimiento.",
+    situation: "SHEIN necesita proteger su competitividad y responder a las críticas por el volumen de producción, los residuos textiles y la corta vida útil de algunos productos. No hay una solución sin costos ni compromisos.",
+    choices: [
+      {
+        text: "Invertir en durabilidad, mejor información de materiales y reducción de residuos, midiendo resultados.",
+        effects: { profit: -3, growth: 2, reputation: 8, sustainability: 12 },
+        feedback: "La inversión puede elevar costos en el corto plazo, pero objetivos medibles y mejoras verificables pueden fortalecer la confianza. La efectividad dependerá de resultados reales, no solo de promesas."
+      },
+      {
+        text: "Mantener precios ultrabajos y acelerar el lanzamiento de nuevos productos.",
+        effects: { profit: 6, growth: 10, reputation: -5, sustainability: -10 },
+        feedback: "Esta estrategia refuerza los atributos que impulsaron el crecimiento, pero puede intensificar las críticas relacionadas con sobreproducción, residuos y consumo acelerado."
+      },
+      {
+        text: "Probar un programa piloto de reparación, reventa o recogida textil y evaluar su impacto antes de ampliarlo.",
+        effects: { profit: -1, growth: 3, reputation: 6, sustainability: 9 },
+        feedback: "Un piloto permite comprobar la participación de los clientes y los resultados ambientales antes de escalar. Requiere inversión, logística y métricas claras para saber si funciona."
+      }
+    ]
+  }
+];
+
+let stats = {...initialStats};
+let roundIndex = 0;
+let answered = false;
+let selectedChoice = null;
+let history = [];
+
+const $ = id => document.getElementById(id);
+const clamp = n => Math.max(0, Math.min(100, n));
+
+function renderStats() {
+  for (const key of Object.keys(statLabels)) {
+    $(key + "Value").textContent = stats[key] + "/100";
+    $(key + "Bar").style.width = stats[key] + "%";
+  }
+}
+
+function bindChoice(btn, index) {
+  // Native click supports mouse, touchscreen, stylus and keyboard activation.
+  // Avoid separate touchend handling, which can race with the browser's click.
+  btn.type = "button";
+  btn.style.pointerEvents = "auto";
+  btn.style.touchAction = "manipulation";
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    choose(index);
+  });
+}
+
+function renderRound() {
+  answered = false;
+  selectedChoice = null;
+  const r = rounds[roundIndex];
+  $("roundPill").textContent = `Ronda ${roundIndex + 1} de ${rounds.length}`;
+  $("progressText").textContent = `Progreso: ${Math.round(roundIndex / rounds.length * 100)}%`;
+  $("progressBar").style.width = (roundIndex / rounds.length * 100) + "%";
+  $("category").textContent = r.category;
+  $("scenarioTitle").textContent = r.title;
+  $("scenarioIntro").textContent = r.intro;
+  $("scenarioText").textContent = r.situation;
+  $("feedback").className = "feedback hidden";
+  $("feedback").innerHTML = "";
+  $("nextBtn").classList.add("hidden");
+  $("choices").innerHTML = "";
+  r.choices.forEach((choice, index) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "choice";
+    btn.setAttribute("aria-label", `Opción ${String.fromCharCode(65 + index)}: ${choice.text}`);
+    btn.innerHTML = `<span class="letter">${String.fromCharCode(65 + index)}</span><span>${choice.text}</span>`;
+    bindChoice(btn, index);
+    $("choices").appendChild(btn);
+  });
+  renderStats();
+  try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (_) {}
+}
+
+function choose(choiceIndex) {
+  if (answered) return;
+  selectedChoice = choiceIndex;
+  [...$("choices").children].forEach((btn, index) => {
+    btn.classList.toggle("selected", index === choiceIndex);
+    btn.setAttribute("aria-pressed", index === choiceIndex ? "true" : "false");
+  });
+  const chosen = rounds[roundIndex].choices[choiceIndex];
+  const feedback = $("feedback");
+  feedback.className = "feedback";
+  feedback.style.background = "#faf7ff";
+  feedback.innerHTML = `<h3>Decisión seleccionada</h3><p>Has elegido: <strong>${chosen.text}</strong></p><p>Puedes seleccionar otra opción si fue un error. Cuando estés seguro, pulsa «Confirmar decisión».</p>`;
+  $("nextBtn").textContent = "Confirmar decisión";
+  $("nextBtn").classList.remove("hidden");
+}
+
+function confirmChoice() {
+  if (answered || selectedChoice === null) return;
+  answered = true;
+  const r = rounds[roundIndex];
+  const chosen = r.choices[selectedChoice];
+  for (const key of Object.keys(chosen.effects)) stats[key] = clamp(stats[key] + chosen.effects[key]);
+  history.push({ round: r.title, choice: chosen.text, effects: {...chosen.effects}, feedback: chosen.feedback });
+  [...$("choices").children].forEach((btn, index) => {
+    btn.disabled = true;
+    if (index === selectedChoice) btn.classList.add("selected");
+  });
+  const feedback = $("feedback");
+  feedback.className = "feedback";
+  feedback.style.background = "#faf7ff";
+  feedback.innerHTML = `<h3>Consecuencias de tu decisión</h3><p>${chosen.feedback}</p>`;
+  $("nextBtn").textContent = roundIndex === rounds.length - 1 ? "Ver informe final →" : "Siguiente desafío →";
+  renderStats();
+}
+
+function calculateScore() {
+  const values = Object.values(stats);
+  const average = values.reduce((a, b) => a + b, 0) / values.length;
+  const balancePenalty = (Math.max(...values) - Math.min(...values)) * 0.12;
+  return Math.round(clamp(average - balancePenalty));
+}
+
+function showResults() {
+  $("gameView").classList.add("hidden");
+  $("resultView").classList.remove("hidden");
+  $("progressText").textContent = "Progreso: 100%";
+  $("progressBar").style.width = "100%";
+  const score = calculateScore();
+  $("scoreNumber").textContent = score;
+  $("scoreCircle").style.background = `conic-gradient(var(--accent) ${score * 3.6}deg, #eeeaf3 ${score * 3.6}deg)`;
+  let headline, summary;
+  if (score >= 80) {
+    headline = "Dirección estratégica equilibrada";
+    summary = "Has logrado un desempeño global sólido al equilibrar varios objetivos empresariales.";
+  } else if (score >= 65) {
+    headline = "Dirección con potencial";
+    summary = "Has construido una estrategia razonable, aunque algunas decisiones pueden generar tensiones entre los objetivos.";
+  } else if (score >= 45) {
+    headline = "Resultados mixtos";
+    summary = "Algunas decisiones favorecieron ciertos indicadores, pero otros quedaron expuestos a riesgos.";
+  } else {
+    headline = "Estrategia en revisión";
+    summary = "Tus resultados sugieren que conviene revisar las consecuencias de corto y largo plazo de tus decisiones.";
+  }
+  $("resultHeadline").textContent = headline;
+  $("resultSummary").textContent = summary;
+  $("reportGrid").innerHTML = "";
+  for (const key of Object.keys(statLabels)) {
+    const div = document.createElement("div");
+    div.className = "report-stat";
+    div.innerHTML = `<span>${statLabels[key]}</span><strong>${stats[key]}/100</strong><div class="track" style="margin-top:10px"><div class="fill" style="width:${stats[key]}%"></div></div>`;
+    $("reportGrid").appendChild(div);
+  }
+  const strongest = Object.keys(stats).sort((a,b) => stats[b] - stats[a])[0];
+  const weakest = Object.keys(stats).sort((a,b) => stats[a] - stats[b])[0];
+  const list = [
+    `Tu indicador más alto es ${statLabels[strongest].toLowerCase()} (${stats[strongest]}/100).`,
+    `Tu indicador más bajo es ${statLabels[weakest].toLowerCase()} (${stats[weakest]}/100); considera cómo fortalecerlo sin perjudicar los demás.`,
+    `Compara tus decisiones de marketing y producción: ¿cómo afectaron al crecimiento y a la sostenibilidad?`,
+    `Las decisiones sobre proveedores y transparencia muestran que la reputación depende de prácticas verificables, no solo de comunicación.`
+  ];
+  $("reportList").innerHTML = "";
+  list.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    $("reportList").appendChild(li);
+  });
+  $("restartBtn").classList.add("hidden");
+  try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (_) {}
+}
+
+function restart() {
+  stats = {...initialStats};
+  roundIndex = 0;
+  answered = false;
+  selectedChoice = null;
+  history = [];
+  $("resultView").classList.add("hidden");
+  $("gameView").classList.remove("hidden");
+  $("progressBar").style.width = "0%";
+  $("progressText").textContent = "Progreso: 0%";
+  renderRound();
+}
+
+$("nextBtn").addEventListener("click", () => {
+  if (!answered) { confirmChoice(); return; }
+  if (roundIndex < rounds.length - 1) {
+    roundIndex++;
+    renderRound();
+  } else {
+    showResults();
+  }
+});
+$("printBtn").addEventListener("click", () => window.print());
+$("playAgainBtn").addEventListener("click", restart);
+
+renderRound();
+</script>
+</body>
+</html>
