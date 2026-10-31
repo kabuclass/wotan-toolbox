@@ -291,3 +291,121 @@ a {
     align-items: flex-start;
   }
 }
+
+
+/* Category pages */
+
+.page-hero {
+  max-width: 1120px;
+  margin: 30px auto 45px;
+  padding: 45px 30px;
+  border-radius: 24px;
+  background: var(--blue-light);
+}
+
+.page-hero.games-hero {
+  background: var(--green-light);
+}
+
+.page-hero h1 {
+  font-family: 'Manrope', sans-serif;
+  font-size: clamp(32px, 5vw, 44px);
+  margin: 10px 0;
+}
+
+.page-hero p {
+  color: var(--muted);
+}
+
+.breadcrumb {
+  max-width: 1120px;
+  margin: 30px auto 0;
+  padding: 0 24px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.breadcrumb a:hover {
+  color: var(--blue);
+}
+
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.activity-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  padding: 23px;
+  transition: .2s;
+}
+
+.activity-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(30, 50, 90, .07);
+}
+
+.activity-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  background: var(--blue-light);
+  border-radius: 13px;
+  font-size: 23px;
+  margin-bottom: 17px;
+}
+
+.games-page .activity-icon {
+  background: var(--green-light);
+}
+
+.activity-card h3 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 18px;
+  margin-bottom: 7px;
+}
+
+.activity-card p {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.activity-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--blue);
+  background: var(--blue-light);
+  padding: 5px 9px;
+  border-radius: 20px;
+  margin-top: 15px;
+}
+
+.games-page .activity-tag {
+  color: var(--green);
+  background: var(--green-light);
+}
+
+.activity-open {
+  display: block;
+  margin-top: 17px;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.games-page .activity-open {
+  color: var(--green);
+}
+
+.back-link {
+  display: inline-block;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 25px;
+}
