@@ -1,17 +1,20 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>reading | Teacher Toolbox</title>
+  <title>Reading | Teacher Toolbox</title>
   <link rel="stylesheet" href="../style.css">
   <script src="../script.js" defer></script>
+
   <style>
     /* Additional styles specific to the library list */
     .filter-bar {
       margin-bottom: 2rem;
       position: relative;
     }
+
     .filter-bar input {
       width: 100%;
       padding: 1rem 1.5rem;
@@ -24,17 +27,21 @@
       outline: none;
       transition: border-color 0.2s ease;
     }
+
     .filter-bar input:focus {
       border-color: var(--accent-color);
     }
+
     .filter-bar input::placeholder {
       color: var(--text-secondary);
     }
+
     .reading-list {
       display: flex;
       flex-direction: column;
       gap: 1rem;
     }
+
     .reading-item {
       display: flex;
       align-items: center;
@@ -47,16 +54,19 @@
       text-decoration: none;
       color: inherit;
     }
+
     .reading-item:hover {
       transform: translateY(-2px);
       border-color: var(--accent-color);
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
+
     .reading-info {
       display: flex;
       align-items: center;
       gap: 1rem;
     }
+
     .file-icon {
       display: flex;
       align-items: center;
@@ -68,32 +78,45 @@
       font-size: 0.75rem;
       font-weight: 700;
     }
-    .file-icon.pdf { color: #f87171; }
-    .file-icon.html { color: #60a5fa; }
+
+    .file-icon.pdf {
+      color: #f87171;
+    }
+
+    .file-icon.html {
+      color: #60a5fa;
+    }
+
     .reading-title {
       font-weight: 600;
       font-size: 1.05rem;
     }
+
     .reading-type {
       font-size: 0.85rem;
       color: var(--text-secondary);
       margin-top: 0.1rem;
     }
+
     .open-arrow {
       color: var(--text-secondary);
       font-size: 1.2rem;
       transition: color 0.2s ease;
     }
+
     .reading-item:hover .open-arrow {
       color: var(--accent-color);
     }
   </style>
 </head>
+
 <body>
+
   <header class="site-header">
     <a class="brand" href="../index.html">
       Teacher Toolbox
     </a>
+
     <nav class="nav">
       <a href="../index.html" data-en="Home" data-es="Inicio">Home</a>
       <button class="language-toggle" id="languageToggle">ES</button>
@@ -105,73 +128,120 @@
   </div>
 
   <main>
+
     <section class="page-hero">
       <span class="eyebrow">READ & DISCOVER</span>
+
       <h1>Lectura / Reading</h1>
-      <p data-en="Explore texts, business cases and reading activities."
-         data-es="Explora textos, casos de negocio y actividades de lectura.">
+
+      <p
+        data-en="Explore texts, business cases and reading activities."
+        data-es="Explora textos, casos de negocio y actividades de lectura."
+      >
         Explore texts, business cases and reading activities.
       </p>
     </section>
 
     <section class="section">
+
       <div class="section-heading">
-        <h2 data-en="Reading library" data-es="Biblioteca de lecturas">Reading library</h2>
-        <p data-en="Choose a reading activity to get started."
-           data-es="Elige una actividad de lectura para comenzar.">
+        <h2 data-en="Reading library" data-es="Biblioteca de lecturas">
+          Reading library
+        </h2>
+
+        <p
+          data-en="Choose a reading activity to get started."
+          data-es="Elige una actividad de lectura para comenzar."
+        >
           Choose a reading activity to get started.
         </p>
       </div>
 
       <!-- Filter Bar -->
       <div class="filter-bar">
-        <input type="text" id="searchInput" placeholder="Search readings..." aria-label="Search readings">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search readings..."
+          aria-label="Search readings"
+        >
       </div>
 
       <!-- Reading List -->
       <div class="reading-list" id="readingList">
-        
-        <!-- PDF Example -->
-        <a href="./files/The history of humankind.pdf" target="_blank" rel="noopener" class="reading-item">
+
+        <!-- PDF: The history of humankind -->
+        <a
+          href="./PDF/The history of humankind.pdf"
+          target="_blank"
+          rel="noopener"
+          class="reading-item"
+        >
           <div class="reading-info">
             <div class="file-icon pdf">PDF</div>
+
             <div>
               <div class="reading-title">The history of humankind</div>
               <div class="reading-type">Document · PDF</div>
             </div>
           </div>
+
           <div class="open-arrow">→</div>
         </a>
 
-        <!-- HTML Example -->
-        <a href="./files/The history of universe.html" target="_blank" rel="noopener" class="reading-item">
+        <!-- HTML: The history of universe -->
+        <a
+          href="./HTML/The history of universe.html"
+          target="_blank"
+          rel="noopener"
+          class="reading-item"
+        >
           <div class="reading-info">
             <div class="file-icon html">HTML</div>
+
             <div>
               <div class="reading-title">The history of universe</div>
               <div class="reading-type">Interactive · HTML</div>
             </div>
           </div>
+
           <div class="open-arrow">→</div>
         </a>
 
-        <!-- PDF Example -->
-        <a href="./files/The new age of technology.pdf" target="_blank" rel="noopener" class="reading-item">
+        <!-- PDF: The new age of technology -->
+        <a
+          href="./PDF/The new age of technology.pdf"
+          target="_blank"
+          rel="noopener"
+          class="reading-item"
+        >
           <div class="reading-info">
             <div class="file-icon pdf">PDF</div>
+
             <div>
               <div class="reading-title">The new age of technology</div>
               <div class="reading-type">Document · PDF</div>
             </div>
           </div>
+
           <div class="open-arrow">→</div>
         </a>
 
       </div>
 
-      <a class="back-link" href="../index.html"
-         data-en="← Back to home" data-es="← Volver al inicio" style="margin-top: 2rem; display: inline-block;">← Back to home</a>
+      <!-- Back to Home -->
+      <a
+        class="back-link"
+        href="../index.html"
+        data-en="← Back to home"
+        data-es="← Volver al inicio"
+        style="margin-top: 2rem; display: inline-block;"
+      >
+        ← Back to home
+      </a>
+
     </section>
+
   </main>
 
   <footer class="site-footer">
@@ -182,23 +252,34 @@
   <!-- Simple Search Script -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+
       const searchInput = document.getElementById('searchInput');
       const readingList = document.getElementById('readingList');
       const items = readingList.querySelectorAll('.reading-item');
 
       searchInput.addEventListener('input', (e) => {
+
         const query = e.target.value.toLowerCase().trim();
 
         items.forEach(item => {
-          const title = item.querySelector('.reading-title').textContent.toLowerCase();
+
+          const title = item
+            .querySelector('.reading-title')
+            .textContent
+            .toLowerCase();
+
           if (title.includes(query)) {
             item.style.display = 'flex';
           } else {
             item.style.display = 'none';
           }
+
         });
+
       });
+
     });
   </script>
+
 </body>
 </html>
