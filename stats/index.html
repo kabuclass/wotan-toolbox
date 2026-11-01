@@ -92,48 +92,6 @@
       padding: 0 1.4rem 5rem;
     }
 
-    /* QR */
-    .qr-box {
-      background: var(--surface-color);
-      border: 1px solid var(--border-color);
-      border-radius: 18px;
-      padding: 2rem 1.5rem;
-      text-align: center;
-      margin-bottom: 1.8rem;
-    }
-    .qr-box h2 { font-size: 1.25rem; margin-bottom: 0.6rem; }
-    .qr-box p { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.4rem; }
-
-    .qr-code {
-      width: 180px;
-      height: 180px;
-      margin: 0 auto;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: transform 0.25s ease;
-      background-size: cover;
-      background-position: center;
-    }
-    .qr-code:hover { transform: scale(1.04); }
-    .qr-hint { margin-top: 0.9rem; font-size: 0.85rem; color: var(--text-secondary); }
-
-    .qr-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.95);
-      z-index: 100;
-      place-items: center;
-      cursor: pointer;
-    }
-    .qr-overlay.open { display: grid; }
-    .qr-overlay img {
-      width: min(90vw, 420px);
-      height: min(90vw, 420px);
-      border-radius: 16px;
-      background: white;
-    }
-
     /* Rating */
     .rating-card {
       background: var(--surface-color);
@@ -247,7 +205,6 @@
       .page-hero { padding: 2.4rem 1.25rem 1.8rem; }
       .section { padding: 0 1.15rem 4rem; }
       .big-score { font-size: 2.9rem; }
-      .qr-code { width: 160px; height: 160px; }
     }
   </style>
 </head>
@@ -268,24 +225,6 @@
     </section>
 
     <section class="section">
-
-      <!-- QR CODE -->
-      <div class="qr-box">
-        <h2>Evaluar la clase</h2>
-        <p>Escanea el código para responder el formulario de forma anónima.</p>
-
-        <div 
-          class="qr-code" 
-          id="qrCode"
-          title="Haz clic para ampliar"
-          style="background-image: url('https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://forms.office.com/r/REPLACE-WITH-YOUR-FORM-ID');"
-        ></div>
-        <div class="qr-hint">Toca el código para verlo más grande</div>
-      </div>
-
-      <div class="qr-overlay" id="qrOverlay">
-        <img id="qrLarge" src="" alt="Código QR ampliado">
-      </div>
 
       <!-- RATING -->
       <div class="rating-card">
@@ -383,7 +322,6 @@
           Object.entries(row).forEach(([key, value]) => {
             const k = key.toLowerCase();
 
-            // Collect ratings for this student
             if (typeof value === 'number' && value >= 1 && value <= 5) {
               studentRatings.push(value);
             }
@@ -391,7 +329,6 @@
               studentRatings.push(Number(value.trim()));
             }
 
-            // Collect feedback
             if (k.includes('mejorar') || k.includes('feedback') || k.includes('coment') || k.includes('opinión') || k.includes('opinion')) {
               const text = String(value).trim();
               if (text.length > 20) {
@@ -400,13 +337,11 @@
             }
           });
 
-          // Average of this student's ratings
           if (studentRatings.length > 0) {
             perStudentAverages.push(average(studentRatings));
           }
         });
 
-        // Final average and bars (based on one value per student)
         const avg = average(perStudentAverages);
         const counts = countStars(perStudentAverages);
 
@@ -416,7 +351,6 @@
         const fullStars = Math.round(avg);
         document.getElementById('starDisplay').textContent = '★'.repeat(fullStars) + '☆'.repeat(5 - fullStars);
 
-        // Bars
         const barsEl = document.getElementById('bars');
         barsEl.innerHTML = '';
         const maxCount = Math.max(...Object.values(counts), 1);
@@ -431,7 +365,6 @@
             </div>`;
         }
 
-        // Testimonials – longest first
         allFeedbacks = feedbacks.sort((a, b) => b.length - a.length);
         visibleCount = 6;
         renderTestimonials();
@@ -439,7 +372,6 @@
       } catch (err) {
         console.error(err);
 
-        // Fallback
         document.getElementById('avgScore').textContent = '4.87';
         document.getElementById('totalVotes').textContent = 'Basado en 153 evaluaciones';
         document.getElementById('bars').innerHTML = `
@@ -457,17 +389,6 @@
         renderTestimonials();
       }
     }
-
-    // QR enlarge
-    document.getElementById('qrCode').addEventListener('click', () => {
-      const style = window.getComputedStyle(document.getElementById('qrCode'));
-      const bg = style.backgroundImage.slice(5, -2);
-      document.getElementById('qrLarge').src = bg.replace('180x180', '400x400');
-      document.getElementById('qrOverlay').classList.add('open');
-    });
-    document.getElementById('qrOverlay').addEventListener('click', () => {
-      document.getElementById('qrOverlay').classList.remove('open');
-    });
 
     // Testimonials toggle
     document.getElementById('testimonialToggle').addEventListener('click', () => {
