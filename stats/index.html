@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
+  <title>Stats | Teacher Toolbox</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --surface-color: #1e293b;
+      --text-primary: #f8fafc;
+      --text-secondary: #b6c4d8;
+      --accent-color: #60a5fa;
+      --border-color: #3b4b63;
+      --stats-accent: #d2a922;
+      --stats-soft: rgba(210, 169, 34, 0.13);
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-color);
+      color: var(--text-primary);
+      font-family: var(--font-family);
+      font-size: 17px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 1.35rem 2rem;
+    }
+
+    .brand {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .breadcrumb {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 0 2rem 1.5rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .breadcrumb a:hover { color: var(--accent-color); }
+
+    .page-hero {
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 3.2rem 1.5rem 2.2rem;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: block;
+      margin-bottom: 1rem;
+      color: var(--stats-accent);
+      font-size: 0.82rem;
+      font-weight: 750;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .page-hero h1 {
+      margin-bottom: 0.8rem;
+      font-size: clamp(2.2rem, 5vw, 3.1rem);
+      font-weight: 750;
+      letter-spacing: -0.04em;
+      line-height: 1.15;
+    }
+
+    .page-hero p {
+      max-width: 520px;
+      margin: 0 auto;
+      color: var(--text-secondary);
+      font-size: 1.08rem;
+    }
+
+    .section {
+      width: min(720px, 100%);
+      margin: 0 auto;
+      padding: 0 1.4rem 5rem;
+    }
+
+    /* ===== QR CODE ===== */
+    .qr-box {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      margin-bottom: 1.8rem;
+    }
+
+    .qr-box h2 {
+      font-size: 1.25rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .qr-box p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .qr-code {
+      width: 180px;
+      height: 180px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: transform 0.25s ease;
+      /* Temporary placeholder – replace with real QR later */
+      background-image: url("https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://forms.office.com/r/REPLACE-WITH-YOUR-FORM-ID");
+      background-size: cover;
+    }
+
+    .qr-code:hover {
+      transform: scale(1.04);
+    }
+
+    .qr-hint {
+      margin-top: 0.9rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* Full screen QR overlay */
+    .qr-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.95);
+      z-index: 100;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .qr-overlay.open {
+      display: grid;
+    }
+
+    .qr-overlay img {
+      width: min(90vw, 420px);
+      height: min(90vw, 420px);
+      border-radius: 16px;
+      background: white;
+    }
+
+    /* ===== STAR RATING ===== */
+    .rating-card {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 1.8rem 1.5rem;
+      margin-bottom: 1.8rem;
+      text-align: center;
+    }
+
+    .big-score {
+      font-size: 3.4rem;
+      font-weight: 800;
+      color: var(--stats-accent);
+      line-height: 1;
+      margin: 0.4rem 0 0.2rem;
+    }
+
+    .stars {
+      color: var(--stats-accent);
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+      margin-bottom: 0.6rem;
+    }
+
+    .total-votes {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 1.6rem;
+    }
+
+    .bars {
+      text-align: left;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-bottom: 0.55rem;
+      font-size: 0.9rem;
+    }
+
+    .bar-label {
+      width: 18px;
+      text-align: right;
+      color: var(--text-secondary);
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 10px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--stats-accent);
+      border-radius: 99px;
+    }
+
+    .bar-count {
+      width: 36px;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    /* ===== WORD CLOUD ===== */
+    .wordcloud-toggle {
+      display: block;
+      width: 100%;
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 1.1rem 1.3rem;
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .wordcloud-toggle:hover {
+      border-color: var(--stats-accent);
+    }
+
+    .wordcloud-area {
+      display: none;
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-top: none;
+      border-radius: 0 0 14px 14px;
+      padding: 1.5rem;
+      min-height: 220px;
+      text-align: center;
+    }
+
+    .wordcloud-area.open {
+      display: block;
+    }
+
+    .word {
+      display: inline-block;
+      margin: 0.35rem 0.5rem;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 2.5rem;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .back-link:hover { color: var(--accent-color); }
+
+    @media (max-width: 700px) {
+      body { font-size: 16px; }
+      .site-header { padding: 1.1rem 1.25rem; }
+      .breadcrumb { padding: 0 1.25rem 1.2rem; }
+      .page-hero { padding: 2.4rem 1.25rem 1.8rem; }
+      .section { padding: 0 1.15rem 4rem; }
+      .big-score { font-size: 2.9rem; }
+      .qr-code { width: 160px; height: 160px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../index.html">Teacher Toolbox</a>
+  </header>
+
+  <div class="breadcrumb">
+    <a href="../index.html">Home</a> / Stats
+  </div>
+
+  <main>
+    <section class="page-hero">
+      <span class="eyebrow">TRACK & ANALYSE</span>
+      <h1>Stats</h1>
+      <p>Resultados anónimos de las evaluaciones de los estudiantes.</p>
+    </section>
+
+    <section class="section">
+
+      <!-- QR CODE -->
+      <div class="qr-box">
+        <h2>Evaluar la clase</h2>
+        <p>Escanea el código para responder el formulario de forma anónima.</p>
+
+        <!-- 
+          INSTRUCTIONS TO CHANGE THE FORM LINK:
+          1. Replace the long URL below with your real Microsoft Form link
+          2. Keep the rest of the line exactly the same
+        -->
+        <div 
+          class="qr-code" 
+          id="qrCode"
+          title="Haz clic para ampliar"
+          style="background-image: url('https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://forms.office.com/r/REPLACE-WITH-YOUR-FORM-ID');"
+        ></div>
+
+        <div class="qr-hint">Toca el código para verlo más grande</div>
+      </div>
+
+      <!-- Full screen overlay -->
+      <div class="qr-overlay" id="qrOverlay">
+        <img id="qrLarge" src="" alt="Código QR ampliado">
+      </div>
+
+      <!-- STAR RATING -->
+      <div class="rating-card">
+        <div style="color:var(--text-secondary);font-size:0.9rem;font-weight:600;">Calificación promedio</div>
+        <div class="big-score">4.87</div>
+        <div class="stars">★★★★★</div>
+        <div class="total-votes">Basado en 156 evaluaciones</div>
+
+        <div class="bars">
+          <!-- 5 stars -->
+          <div class="bar-row">
+            <div class="bar-label">5</div>
+            <div class="bar-track"><div class="bar-fill" style="width: 82%"></div></div>
+            <div class="bar-count">128</div>
+          </div>
+          <!-- 4 stars -->
+          <div class="bar-row">
+            <div class="bar-label">4</div>
+            <div class="bar-track"><div class="bar-fill" style="width: 12%"></div></div>
+            <div class="bar-count">19</div>
+          </div>
+          <!-- 3 stars -->
+          <div class="bar-row">
+            <div class="bar-label">3</div>
+            <div class="bar-track"><div class="bar-fill" style="width: 4%"></div></div>
+            <div class="bar-count">6</div>
+          </div>
+          <!-- 2 stars -->
+          <div class="bar-row">
+            <div class="bar-label">2</div>
+            <div class="bar-track"><div class="bar-fill" style="width: 1.5%"></div></div>
+            <div class="bar-count">2</div>
+          </div>
+          <!-- 1 star -->
+          <div class="bar-row">
+            <div class="bar-label">1</div>
+            <div class="bar-track"><div class="bar-fill" style="width: 0.6%"></div></div>
+            <div class="bar-count">1</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WORD CLOUD (hidden by default) -->
+      <button class="wordcloud-toggle" id="wordToggle">
+        Vea lo qué otros estudiantes piensan sobre el docente
+      </button>
+
+      <div class="wordcloud-area" id="wordArea">
+        <!-- Dummy words – later these will come from the Excel -->
+        <span class="word" style="font-size:1.8rem;color:#fcd34d;">claro</span>
+        <span class="word" style="font-size:1.5rem;color:#fde68a;">dinámico</span>
+        <span class="word" style="font-size:1.3rem;color:#fef3c7;">paciente</span>
+        <span class="word" style="font-size:1.6rem;color:#fbbf24;">explicativo</span>
+        <span class="word" style="font-size:1.2rem;color:#fcd34d;">organizado</span>
+        <span class="word" style="font-size:1.4rem;color:#fde68a;">motivador</span>
+        <span class="word" style="font-size:1.1rem;color:#fef3c7;">cercano</span>
+        <span class="word" style="font-size:1.7rem;color:#fbbf24;">profesional</span>
+        <span class="word" style="font-size:1.25rem;color:#fcd34d;">interesante</span>
+        <span class="word" style="font-size:1.35rem;color:#fde68a;">exigente</span>
+        <span class="word" style="font-size:1.15rem;color:#fef3c7;">amable</span>
+        <span class="word" style="font-size:1.45rem;color:#fbbf24;">preparado</span>
+      </div>
+
+      <a class="back-link" href="../index.html">← Back to home</a>
+    </section>
+  </main>
+
+  <script>
+    // QR enlarge
+    const qrCode = document.getElementById('qrCode');
+    const overlay = document.getElementById('qrOverlay');
+    const qrLarge = document.getElementById('qrLarge');
+
+    qrCode.addEventListener('click', () => {
+      // Get the current background image URL
+      const style = window.getComputedStyle(qrCode);
+      const bg = style.backgroundImage.slice(5, -2); // remove url("...")
+      qrLarge.src = bg.replace('180x180', '400x400');
+      overlay.classList.add('open');
+    });
+
+    overlay.addEventListener('click', () => {
+      overlay.classList.remove('open');
+    });
+
+    // Word cloud toggle
+    const toggle = document.getElementById('wordToggle');
+    const area = document.getElementById('wordArea');
+
+    toggle.addEventListener('click', () => {
+      area.classList.toggle('open');
+      if (area.classList.contains('open')) {
+        toggle.style.borderRadius = '14px 14px 0 0';
+      } else {
+        toggle.style.borderRadius = '14px';
+      }
+    });
+  </script>
+</body>
+</html>
