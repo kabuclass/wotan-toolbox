@@ -213,6 +213,24 @@
       line-height: 1.5;
     }
 
+    .show-more-btn {
+      display: none;
+      width: 100%;
+      margin-top: 1rem;
+      padding: 0.85rem;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      color: var(--stats-accent);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .show-more-btn:hover {
+      border-color: var(--stats-accent);
+      background: rgba(45, 212, 191, 0.08);
+    }
+
     .back-link {
       display: inline-block;
       margin-top: 2.5rem;
@@ -260,7 +278,7 @@
           class="qr-code" 
           id="qrCode"
           title="Haz clic para ampliar"
-          style="background-image: url('https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://forms.cloud.microsoft/r/77nH1azAsZ');"
+          style="background-image: url('https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://forms.office.com/r/REPLACE-WITH-YOUR-FORM-ID');"
         ></div>
         <div class="qr-hint">Toca el código para verlo más grande</div>
       </div>
@@ -286,6 +304,7 @@
 
       <div class="testimonials-area" id="testimonialsArea">
         <div id="testimonialsList"></div>
+        <button class="show-more-btn" id="showMoreBtn">Mostrar más</button>
       </div>
 
       <a class="back-link" href="../index.html">← Back to home</a>
@@ -294,8 +313,9 @@
 
   <script>
     const DATA_URL = './data.xlsx';
+    let allFeedbacks = [];
+    let visibleCount = 6;
 
-    // More character-like avatars (still anonymous & legal)
     function getAvatar(seed) {
       return `https://api.dicebear.com/9.x/personas/svg?seed=${encodeURIComponent(seed)}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
     }
@@ -314,6 +334,33 @@
       return counts;
     }
 
+    function renderTestimonials() {
+      const list = document.getElementById('testimonialsList');
+      const btn = document.getElementById('showMoreBtn');
+
+      if (allFeedbacks.length === 0) {
+        list.innerHTML = '<p style="color:var(--text-secondary);text-align:center;">Aún no hay comentarios largos.</p>';
+        btn.style.display = 'none';
+        return;
+      }
+
+      const toShow = allFeedbacks.slice(0, visibleCount);
+
+      list.innerHTML = toShow.map(item => `
+        <div class="testimonial-card">
+          <img class="avatar" src="${getAvatar(item.seed)}" alt="Avatar">
+          <div class="testimonial-text">${item.text}</div>
+        </div>
+      `).join('');
+
+      if (visibleCount < allFeedbacks.length) {
+        btn.style.display = 'block';
+        btn.textContent = `Mostrar más (${allFeedbacks.length - visibleCount} restantes)`;
+      } else {
+        btn.style.display = 'none';
+      }
+    }
+
     async function loadData() {
       try {
         const response = await fetch(DATA_URL);
@@ -326,37 +373,42 @@
 
         if (!rows.length) throw new Error('Empty file');
 
-        // ===== IMPORTANT: count ROWS (one student = one evaluation) =====
         const totalStudents = rows.length;
-
-        const ratingValues = [];
+        const perStudentAverages = [];
         const feedbacks = [];
 
         rows.forEach((row, index) => {
+          const studentRatings = [];
+
           Object.entries(row).forEach(([key, value]) => {
             const k = key.toLowerCase();
 
-            // Collect ratings (for average and bars)
+            // Collect ratings for this student
             if (typeof value === 'number' && value >= 1 && value <= 5) {
-              ratingValues.push(value);
+              studentRatings.push(value);
             }
             if (typeof value === 'string' && /^[1-5]$/.test(value.trim())) {
-              ratingValues.push(Number(value.trim()));
+              studentRatings.push(Number(value.trim()));
             }
 
-            // Collect feedback text
+            // Collect feedback
             if (k.includes('mejorar') || k.includes('feedback') || k.includes('coment') || k.includes('opinión') || k.includes('opinion')) {
               const text = String(value).trim();
-              if (text.length > 15) {          // ignore very short answers
+              if (text.length > 20) {
                 feedbacks.push({ text, seed: 'student' + index, length: text.length });
               }
             }
           });
+
+          // Average of this student's ratings
+          if (studentRatings.length > 0) {
+            perStudentAverages.push(average(studentRatings));
+          }
         });
 
-        // Average & bars
-        const avg = average(ratingValues);
-        const counts = countStars(ratingValues);
+        // Final average and bars (based on one value per student)
+        const avg = average(perStudentAverages);
+        const counts = countStars(perStudentAverages);
 
         document.getElementById('avgScore').textContent = avg.toFixed(2);
         document.getElementById('totalVotes').textContent = `Basado en ${totalStudents} evaluaciones`;
@@ -379,24 +431,10 @@
             </div>`;
         }
 
-        // ===== Testimonials: longest comments first =====
-        const list = document.getElementById('testimonialsList');
-
-        if (feedbacks.length === 0) {
-          list.innerHTML = '<p style="color:var(--text-secondary);text-align:center;">Aún no hay comentarios largos.</p>';
-        } else {
-          // Sort by length (longest first) and take the top 10
-          const longest = feedbacks
-            .sort((a, b) => b.length - a.length)
-            .slice(0, 10);
-
-          list.innerHTML = longest.map(item => `
-            <div class="testimonial-card">
-              <img class="avatar" src="${getAvatar(item.seed)}" alt="Avatar">
-              <div class="testimonial-text">${item.text}</div>
-            </div>
-          `).join('');
-        }
+        // Testimonials – longest first
+        allFeedbacks = feedbacks.sort((a, b) => b.length - a.length);
+        visibleCount = 6;
+        renderTestimonials();
 
       } catch (err) {
         console.error(err);
@@ -405,23 +443,18 @@
         document.getElementById('avgScore').textContent = '4.87';
         document.getElementById('totalVotes').textContent = 'Basado en 153 evaluaciones';
         document.getElementById('bars').innerHTML = `
-          <div class="bar-row"><div class="bar-label">5</div><div class="bar-track"><div class="bar-fill" style="width:82%"></div></div><div class="bar-count">128</div></div>
-          <div class="bar-row"><div class="bar-label">4</div><div class="bar-track"><div class="bar-fill" style="width:12%"></div></div><div class="bar-count">19</div></div>
+          <div class="bar-row"><div class="bar-label">5</div><div class="bar-track"><div class="bar-fill" style="width:82%"></div></div><div class="bar-count">125</div></div>
+          <div class="bar-row"><div class="bar-label">4</div><div class="bar-track"><div class="bar-fill" style="width:12%"></div></div><div class="bar-count">18</div></div>
           <div class="bar-row"><div class="bar-label">3</div><div class="bar-track"><div class="bar-fill" style="width:4%"></div></div><div class="bar-count">6</div></div>
-          <div class="bar-row"><div class="bar-label">2</div><div class="bar-track"><div class="bar-fill" style="width:1.5%"></div></div><div class="bar-count">2</div></div>
+          <div class="bar-row"><div class="bar-label">2</div><div class="bar-track"><div class="bar-fill" style="width:1.5%"></div></div><div class="bar-count">3</div></div>
           <div class="bar-row"><div class="bar-label">1</div><div class="bar-track"><div class="bar-fill" style="width:0.6%"></div></div><div class="bar-count">1</div></div>
         `;
 
-        document.getElementById('testimonialsList').innerHTML = `
-          <div class="testimonial-card">
-            <img class="avatar" src="${getAvatar('hero1')}" alt="Avatar">
-            <div class="testimonial-text">Las clases fueron muy claras y el docente siempre estuvo dispuesto a resolver dudas. Los ejemplos prácticos ayudaron mucho.</div>
-          </div>
-          <div class="testimonial-card">
-            <img class="avatar" src="${getAvatar('hero2')}" alt="Avatar">
-            <div class="testimonial-text">Excelente dinamismo y ejemplos prácticos. Me ayudó mucho a entender los conceptos más difíciles del módulo.</div>
-          </div>
-        `;
+        allFeedbacks = [
+          { text: 'Las clases fueron muy claras y el docente siempre estuvo dispuesto a resolver dudas. Los ejemplos prácticos ayudaron mucho.', seed: 'hero1', length: 120 },
+          { text: 'Excelente dinamismo y ejemplos prácticos. Me ayudó mucho a entender los conceptos más difíciles del módulo.', seed: 'hero2', length: 110 }
+        ];
+        renderTestimonials();
       }
     }
 
@@ -442,6 +475,12 @@
       area.classList.toggle('open');
       document.getElementById('testimonialToggle').style.borderRadius =
         area.classList.contains('open') ? '14px 14px 0 0' : '14px';
+    });
+
+    // Show more
+    document.getElementById('showMoreBtn').addEventListener('click', () => {
+      visibleCount += 6;
+      renderTestimonials();
     });
 
     loadData();
